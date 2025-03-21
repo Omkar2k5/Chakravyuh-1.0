@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowRight, BarChart3, Brain, CreditCard, DollarSign, LineChart, PiggyBank } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -11,7 +12,13 @@ export default function HomePage() {
       <header className="border-b bg-white">
         <div className="container flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-2">
-            <DollarSign className="h-6 w-6 text-primary" />
+            <Image 
+              src="/images/finance-logo.png" 
+              alt="FinanceBuddy Logo" 
+              width={32} 
+              height={32} 
+              className="object-contain"
+            />
             <span className="text-xl font-bold">FinanceBuddy</span>
           </div>
           <nav className="hidden md:flex gap-6">
@@ -340,7 +347,13 @@ export default function HomePage() {
         <div className="container flex flex-col gap-6 py-8 md:py-12 px-4 md:px-6">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-6 w-6 text-primary" />
+              <Image 
+                src="/images/finance-logo.png" 
+                alt="FinanceBuddy Logo" 
+                width={32} 
+                height={32} 
+                className="object-contain"
+              />
               <span className="text-xl font-bold">FinanceBuddy</span>
             </div>
             <nav className="flex gap-4 md:gap-6 flex-wrap">

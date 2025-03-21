@@ -3,7 +3,7 @@ import {
   ArrowDown,
   ArrowUp,
   CreditCard,
-  DollarSign,
+  IndianRupee,
   HelpCircle,
   LineChart,
   PiggyBank,
@@ -26,7 +26,7 @@ export default function DashboardPage() {
       <div className="border-b">
         <div className="flex h-16 items-center px-4">
           <Link href="/" className="flex items-center gap-2">
-            <DollarSign className="h-6 w-6 text-primary" />
+            <IndianRupee className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">FinanceBuddy</span>
           </Link>
           <div className="ml-auto flex items-center gap-4">
@@ -81,7 +81,7 @@ export default function DashboardPage() {
                     <Wallet className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">$12,546.00</div>
+                    <div className="text-2xl font-bold">₹1,25,460.00</div>
                     <p className="text-xs text-muted-foreground">+2.5% from last month</p>
                   </CardContent>
                 </Card>
@@ -91,7 +91,7 @@ export default function DashboardPage() {
                     <ArrowUp className="h-4 w-4 text-emerald-500" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">$4,935.00</div>
+                    <div className="text-2xl font-bold">₹49,350.00</div>
                     <p className="text-xs text-muted-foreground">+4.1% from last month</p>
                   </CardContent>
                 </Card>
@@ -101,7 +101,7 @@ export default function DashboardPage() {
                     <ArrowDown className="h-4 w-4 text-rose-500" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">$2,640.00</div>
+                    <div className="text-2xl font-bold">₹26,400.00</div>
                     <p className="text-xs text-muted-foreground">+1.2% from last month</p>
                   </CardContent>
                 </Card>
@@ -111,7 +111,7 @@ export default function DashboardPage() {
                     <PiggyBank className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">$2,295.00</div>
+                    <div className="text-2xl font-bold">₹22,950.00</div>
                     <p className="text-xs text-muted-foreground">+10.1% from last month</p>
                   </CardContent>
                 </Card>
@@ -158,7 +158,7 @@ export default function DashboardPage() {
                           <CreditCard className="h-4 w-4 text-muted-foreground" />
                           <span className="text-sm font-medium">Shopping</span>
                         </div>
-                        <span className="text-sm">$450 / $500</span>
+                        <span className="text-sm">₹4,500 / ₹5,000</span>
                       </div>
                       <Progress value={90} className="h-2" />
                       <p className="text-xs text-muted-foreground">90% of budget used</p>
@@ -169,7 +169,7 @@ export default function DashboardPage() {
                           <CreditCard className="h-4 w-4 text-muted-foreground" />
                           <span className="text-sm font-medium">Dining</span>
                         </div>
-                        <span className="text-sm">$320 / $400</span>
+                        <span className="text-sm">₹3,200 / ₹4,000</span>
                       </div>
                       <Progress value={80} className="h-2" />
                       <p className="text-xs text-muted-foreground">80% of budget used</p>
@@ -180,7 +180,7 @@ export default function DashboardPage() {
                           <CreditCard className="h-4 w-4 text-muted-foreground" />
                           <span className="text-sm font-medium">Entertainment</span>
                         </div>
-                        <span className="text-sm">$150 / $300</span>
+                        <span className="text-sm">₹1,500 / ₹3,000</span>
                       </div>
                       <Progress value={50} className="h-2" />
                       <p className="text-xs text-muted-foreground">50% of budget used</p>
@@ -191,7 +191,7 @@ export default function DashboardPage() {
                           <CreditCard className="h-4 w-4 text-muted-foreground" />
                           <span className="text-sm font-medium">Transportation</span>
                         </div>
-                        <span className="text-sm">$200 / $250</span>
+                        <span className="text-sm">₹2,000 / ₹2,500</span>
                       </div>
                       <Progress value={80} className="h-2" />
                       <p className="text-xs text-muted-foreground">80% of budget used</p>

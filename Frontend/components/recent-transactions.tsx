@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, CreditCard, DollarSign, ShoppingBag } from "lucide-react"
+import { ArrowDown, ArrowUp, CreditCard, IndianRupee, ShoppingBag } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -7,7 +7,7 @@ const transactions = [
   {
     id: "t1",
     description: "Grocery Store",
-    amount: -120.5,
+    amount: -1205.0,
     date: "Today",
     category: "Food",
     icon: ShoppingBag,
@@ -15,15 +15,15 @@ const transactions = [
   {
     id: "t2",
     description: "Salary Deposit",
-    amount: 2400.0,
+    amount: 24000.0,
     date: "Yesterday",
     category: "Income",
-    icon: DollarSign,
+    icon: IndianRupee,
   },
   {
     id: "t3",
     description: "Restaurant",
-    amount: -65.3,
+    amount: -653.0,
     date: "Yesterday",
     category: "Dining",
     icon: CreditCard,
@@ -31,7 +31,7 @@ const transactions = [
   {
     id: "t4",
     description: "Online Shopping",
-    amount: -89.99,
+    amount: -899.0,
     date: "Mar 20, 2025",
     category: "Shopping",
     icon: ShoppingBag,
@@ -39,10 +39,10 @@ const transactions = [
   {
     id: "t5",
     description: "Freelance Payment",
-    amount: 350.0,
+    amount: 3500.0,
     date: "Mar 19, 2025",
     category: "Income",
-    icon: DollarSign,
+    icon: IndianRupee,
   },
 ]
 
@@ -77,11 +77,11 @@ export function RecentTransactions() {
             >
               {transaction.amount > 0 ? (
                 <span className="flex items-center">
-                  <ArrowUp className="mr-1 h-3 w-3" />${transaction.amount.toFixed(2)}
+                  <ArrowUp className="mr-1 h-3 w-3" />₹{transaction.amount.toFixed(2)}
                 </span>
               ) : (
                 <span className="flex items-center">
-                  <ArrowDown className="mr-1 h-3 w-3" />${Math.abs(transaction.amount).toFixed(2)}
+                  <ArrowDown className="mr-1 h-3 w-3" />₹{Math.abs(transaction.amount).toFixed(2)}
                 </span>
               )}
             </p>
