@@ -1,4 +1,9 @@
+"use client"
+
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import { ref, onValue, DataSnapshot } from "firebase/database"
+import { database } from "@/lib/firebase"
 import { AlertCircle, ArrowRight, Brain, DollarSign, HelpCircle, Plus, Settings } from "lucide-react"
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -9,7 +14,52 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BudgetForm } from "@/components/budget-form"
 import { DashboardNav } from "@/components/dashboard-nav"
 
+interface Budget {
+  category: string
+  amount: number
+  description: string
+  spent: number
+  createdAt: number
+  isActive: boolean
+}
+
 export default function BudgetingPage() {
+  const [budgets, setBudgets] = useState<Record<string, Budget>>({})
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    try {
+      const budgetsRef = ref(database, 'budgets')
+
+      onValue(budgetsRef, (snapshot: DataSnapshot) => {
+        try {
+          const data = snapshot.val() as Record<string, Budget> | null
+          if (data) {
+            setBudgets(data)
+          } else {
+            setBudgets({})
+          }
+        } catch (err) {
+          console.error('Error processing budgets:', err)
+          setError('Error loading budgets')
+        }
+      })
+    } catch (err) {
+      console.error('Error setting up Firebase listener:', err)
+      setError('Error connecting to database')
+    }
+  }, [])
+
+  const activeBudgets = Object.entries(budgets)
+    .filter(([_, budget]) => budget.isActive)
+    .sort((a, b) => b[1].createdAt - a[1].createdAt)
+
+  const getBudgetColor = (percentage: number) => {
+    if (percentage >= 90) return 'border-l-rose-500'
+    if (percentage >= 70) return 'border-l-amber-500'
+    return 'border-l-green-500'
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="border-b">
@@ -56,13 +106,13 @@ export default function BudgetingPage() {
             </div>
           </div>
 
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Budget Alert</AlertTitle>
-            <AlertDescription>
-              You're approaching your dining budget limit. You've spent 80% of your monthly allocation.
-            </AlertDescription>
-          </Alert>
+          {error && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
           <Tabs defaultValue="active" className="space-y-4">
             <TabsList>
@@ -72,93 +122,37 @@ export default function BudgetingPage() {
             </TabsList>
             <TabsContent value="active" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <Card className="border-l-4 border-l-blue-500">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>Dining</span>
-                      <span className="text-sm font-normal">$320/$400</span>
-                    </CardTitle>
-                    <CardDescription>Monthly budget for restaurants and takeout</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <Progress value={80} className="h-2" />
-                    <p className="mt-2 text-xs text-muted-foreground">80% of budget used</p>
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <Button variant="ghost" size="sm">
-                      View Details
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Adjust
-                    </Button>
-                  </CardFooter>
-                </Card>
-
-                <Card className="border-l-4 border-l-green-500">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>Shopping</span>
-                      <span className="text-sm font-normal">$450/$500</span>
-                    </CardTitle>
-                    <CardDescription>Monthly budget for retail purchases</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <Progress value={90} className="h-2" />
-                    <p className="mt-2 text-xs text-muted-foreground">90% of budget used</p>
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <Button variant="ghost" size="sm">
-                      View Details
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Adjust
-                    </Button>
-                  </CardFooter>
-                </Card>
-
-                <Card className="border-l-4 border-l-purple-500">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>Entertainment</span>
-                      <span className="text-sm font-normal">$150/$300</span>
-                    </CardTitle>
-                    <CardDescription>Monthly budget for movies, events, etc.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <Progress value={50} className="h-2" />
-                    <p className="mt-2 text-xs text-muted-foreground">50% of budget used</p>
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <Button variant="ghost" size="sm">
-                      View Details
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Adjust
-                    </Button>
-                  </CardFooter>
-                </Card>
-
-                <Card className="border-l-4 border-l-amber-500">
-                  <CardHeader>
-                    <CardTitle className="flex items-center justify-between">
-                      <span>Transportation</span>
-                      <span className="text-sm font-normal">$200/$250</span>
-                    </CardTitle>
-                    <CardDescription>Monthly budget for gas, public transit, etc.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <Progress value={80} className="h-2" />
-                    <p className="mt-2 text-xs text-muted-foreground">80% of budget used</p>
-                  </CardContent>
-                  <CardFooter className="flex justify-between">
-                    <Button variant="ghost" size="sm">
-                      View Details
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      Adjust
-                    </Button>
-                  </CardFooter>
-                </Card>
+                {activeBudgets.length === 0 ? (
+                  <Card className="col-span-full">
+                    <CardHeader>
+                      <CardTitle>No Active Budgets</CardTitle>
+                      <CardDescription>Create a new budget to get started</CardDescription>
+                    </CardHeader>
+                  </Card>
+                ) : (
+                  activeBudgets.map(([id, budget]) => {
+                    const percentage = (budget.spent / budget.amount) * 100;
+                    return (
+                      <Card key={id} className={`border-l-4 ${getBudgetColor(percentage)}`}>
+                        <CardHeader>
+                          <CardTitle className="flex items-center justify-between">
+                            <span>{budget.category}</span>
+                            <span className="text-sm font-normal">
+                              ₹{budget.spent.toLocaleString('en-IN')}/₹{budget.amount.toLocaleString('en-IN')}
+                            </span>
+                          </CardTitle>
+                          <CardDescription>{budget.description}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <Progress value={percentage} className="h-2" />
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            {percentage.toFixed(1)}% of budget used
+                          </p>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
+                )}
               </div>
 
               <Card>
@@ -170,10 +164,9 @@ export default function BudgetingPage() {
                   <div className="flex items-start gap-4 rounded-lg border p-4">
                     <Brain className="mt-0.5 h-5 w-5 text-primary" />
                     <div>
-                      <h4 className="font-medium">Dining Budget Optimization</h4>
+                      <h4 className="font-medium">Budget Utilization</h4>
                       <p className="text-sm text-muted-foreground">
-                        You've spent $120 on coffee shops this month. Consider brewing at home to save approximately $80
-                        monthly.
+                        Track your spending against your budget limits to stay within your financial goals.
                       </p>
                     </div>
                   </div>
@@ -181,21 +174,9 @@ export default function BudgetingPage() {
                   <div className="flex items-start gap-4 rounded-lg border p-4">
                     <Brain className="mt-0.5 h-5 w-5 text-primary" />
                     <div>
-                      <h4 className="font-medium">Subscription Audit</h4>
+                      <h4 className="font-medium">Spending Patterns</h4>
                       <p className="text-sm text-muted-foreground">
-                        We've identified 3 overlapping streaming subscriptions. Consolidating could save you $25
-                        monthly.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4 rounded-lg border p-4">
-                    <Brain className="mt-0.5 h-5 w-5 text-primary" />
-                    <div>
-                      <h4 className="font-medium">Smart Shopping Strategy</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Your shopping expenses peak at month-end. Planning purchases earlier could help you stay within
-                        budget.
+                        Monitor your spending patterns and adjust your budgets accordingly.
                       </p>
                     </div>
                   </div>
@@ -224,6 +205,6 @@ export default function BudgetingPage() {
         </main>
       </div>
     </div>
-  )
+  );
 }
 
