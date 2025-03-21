@@ -21,7 +21,7 @@ interface MerchantTotal {
   transactionCount: number
 }
 
-export function ExpenseCategories() {
+export function BudgetStatus() {
   const [merchantTotals, setMerchantTotals] = useState<MerchantTotal[]>([])
   const [error, setError] = useState<string | null>(null)
   const [maxAmount, setMaxAmount] = useState(0)
@@ -96,7 +96,7 @@ export function ExpenseCategories() {
                 <CreditCard className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm font-medium">{merchant.merchantName}</span>
               </div>
-              <span className="text-sm text-rose-600">
+              <span className="text-sm">
                 ₹{merchant.totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </span>
             </div>
@@ -113,5 +113,4 @@ export function ExpenseCategories() {
       )}
     </div>
   )
-}
-
+} 
