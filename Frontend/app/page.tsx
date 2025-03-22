@@ -32,16 +32,6 @@ export default function HomePage() {
               FinGPT
             </Link>
           </nav>
-          <div className="flex items-center gap-4">
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                Log in
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm">Sign up</Button>
-            </Link>
-          </div>
         </div>
       </header>
 
@@ -60,14 +50,9 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Link href="/signup">
+                <Link href="/dashboard">
                   <Button size="lg" className="gap-1.5">
                     Get Started <ArrowRight className="h-4 w-4" />
-                  </Button>
-                </Link>
-                <Link href="/dashboard">
-                  <Button size="lg" variant="outline">
-                    View Demo
                   </Button>
                 </Link>
               </div>
@@ -76,7 +61,7 @@ export default function HomePage() {
               <div className="relative rounded-lg border bg-background p-2 shadow-lg">
                 <div className="rounded-md bg-white shadow-sm">
                   <img
-                    src="/placeholder.svg?height=500&width=700"
+                    src="images/homelogo.png?height=500&width=700"
                     alt="Dashboard Preview"
                     className="rounded-md"
                     width={700}
@@ -149,13 +134,13 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex flex-col items-center md:items-start text-center md:text-left">
-              <div className="w-full max-w-lg mb-6">
+              <div className="w-fit mb-6">
                 <Image 
-                  src="/images/chakravyuh-logo.png" 
+                  src="/images/Sveri.jpeg" 
                   alt="Chakravyuh Logo" 
-                  width={700} 
-                  height={150} 
-                  className="object-contain"
+                  width={180} 
+                  height={180} 
+                  className="object-contain rounded-full border-4 border-[#00e6e6] shadow-lg"
                 />
               </div>
               <h3 className="text-xl font-bold mb-2 text-[#9eff3d]">Chakravyuh 1.0 – 24-Hour Hackathon</h3>

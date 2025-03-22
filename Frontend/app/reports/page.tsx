@@ -1,5 +1,11 @@
+"use client"
+
 import Link from "next/link"
 import { IndianRupee, Download, Filter, Calendar } from "lucide-react"
+import { useEffect, useState } from "react"
+import { ref, onValue, DataSnapshot } from "firebase/database"
+import { database } from "@/lib/firebase"
+import { format } from "date-fns"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,7 +13,71 @@ import { DashboardNav } from "@/components/dashboard-nav"
 import { DashboardChart } from "@/components/dashboard-chart"
 import { ExpensePieChart } from "@/components/expense-pie-chart"
 
+interface Transaction {
+  accountNumber: string
+  amount: number
+  merchantName: string
+  timestamp: number
+  transactionMode: string
+  upiId?: string
+}
+
 export default function ReportsPage() {
+  const [creditTransactions, setCreditTransactions] = useState<Transaction[]>([])
+  const [totalIncome, setTotalIncome] = useState(0)
+  const [incomeChange, setIncomeChange] = useState(0)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    try {
+      const creditRef = ref(database, 'credit')
+
+      onValue(creditRef, (snapshot: DataSnapshot) => {
+        try {
+          const creditData = snapshot.val() as Record<string, Transaction> | null
+          
+          if (creditData) {
+            const transactions = Object.values(creditData)
+              .sort((a, b) => b.timestamp - a.timestamp)
+            
+            setCreditTransactions(transactions)
+            
+            // Calculate total income
+            const total = transactions.reduce((sum, tx) => sum + tx.amount, 0)
+            setTotalIncome(total)
+            
+            // Calculate month-over-month change
+            const currentMonth = new Date().getMonth()
+            const currentMonthTransactions = transactions.filter(tx => 
+              new Date(tx.timestamp).getMonth() === currentMonth
+            )
+            const lastMonthTransactions = transactions.filter(tx => 
+              new Date(tx.timestamp).getMonth() === currentMonth - 1
+            )
+            
+            const currentMonthTotal = currentMonthTransactions.reduce((sum, tx) => sum + tx.amount, 0)
+            const lastMonthTotal = lastMonthTransactions.reduce((sum, tx) => sum + tx.amount, 0)
+            
+            const change = lastMonthTotal > 0 
+              ? ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100 
+              : 0
+            setIncomeChange(Number(change.toFixed(1)))
+          } else {
+            setCreditTransactions([])
+            setTotalIncome(0)
+            setIncomeChange(0)
+          }
+        } catch (err) {
+          console.error('Error processing credit data:', err)
+          setError('Error loading income data')
+        }
+      })
+    } catch (err) {
+      console.error('Error setting up Firebase listener:', err)
+      setError('Error connecting to database')
+    }
+  }, [])
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="border-b">
@@ -76,77 +146,50 @@ export default function ReportsPage() {
             </Card>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Income Analysis</CardTitle>
-                <CardDescription>Your income sources and trends</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium">Total Income</p>
-                      <p className="text-2xl font-bold">₹49,350.00</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-emerald-600">+4.1%</p>
-                      <p className="text-sm text-muted-foreground">vs last month</p>
-                    </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Income Analysis</CardTitle>
+              <CardDescription>Your income sources and transactions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">Total Income</p>
+                    <p className="text-2xl font-bold">₹{totalIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</p>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Salary</span>
-                      <span className="text-sm font-medium">₹40,000.00</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Freelance</span>
-                      <span className="text-sm font-medium">₹5,350.00</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Investments</span>
-                      <span className="text-sm font-medium">₹4,000.00</span>
-                    </div>
+                  <div className="text-right">
+                    <p className={`text-sm font-medium ${incomeChange >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {incomeChange >= 0 ? '+' : ''}{incomeChange}%
+                    </p>
+                    <p className="text-sm text-muted-foreground">vs last month</p>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Savings Analysis</CardTitle>
-                <CardDescription>Your savings and investment performance</CardDescription>
-              </CardHeader>
-              <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium">Total Savings</p>
-                      <p className="text-2xl font-bold">₹22,950.00</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-emerald-600">+10.1%</p>
-                      <p className="text-sm text-muted-foreground">vs last month</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Emergency Fund</span>
-                      <span className="text-sm font-medium">₹10,000.00</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Investment Portfolio</span>
-                      <span className="text-sm font-medium">₹8,950.00</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Fixed Deposits</span>
-                      <span className="text-sm font-medium">₹4,000.00</span>
-                    </div>
-                  </div>
+                  {creditTransactions.length === 0 ? (
+                    <p className="text-center text-muted-foreground">No transactions found</p>
+                  ) : (
+                    creditTransactions.slice(0, 5).map((transaction, index) => (
+                      <div key={`${transaction.timestamp}-${index}`} className="space-y-1 border-b pb-2 last:border-0">
+                        <div className="flex items-center justify-between">
+                          <span className="font-medium">{transaction.merchantName}</span>
+                          <span className="text-emerald-600">+₹{transaction.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>{format(new Date(transaction.timestamp), 'MMM dd, yyyy HH:mm')}</span>
+                          <span>{transaction.transactionMode}</span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          <span>A/C: {transaction.accountNumber}</span>
+                          {transaction.upiId && <span> • UPI: {transaction.upiId}</span>}
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         </main>
       </div>
     </div>

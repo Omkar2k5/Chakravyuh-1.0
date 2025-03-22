@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BarChart3, CreditCard, Home, LineChart, PiggyBank, Settings, User } from "lucide-react"
+import { BarChart3, CreditCard, Home, LineChart, PiggyBank, User } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -27,24 +27,9 @@ export function DashboardNav({ className, ...props }: DashboardNavProps) {
       icon: PiggyBank,
     },
     {
-      title: "Insights",
-      href: "/insights",
-      icon: BarChart3,
-    },
-    {
       title: "Reports",
       href: "/reports",
       icon: LineChart,
-    },
-    {
-      title: "Account",
-      href: "/account",
-      icon: User,
-    },
-    {
-      title: "Settings",
-      href: "/settings",
-      icon: Settings,
     },
   ]
 
